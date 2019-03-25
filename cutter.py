@@ -35,9 +35,7 @@ def add(name,start=None,end=None):
     if name in videos: return "ERROR_EXISTS"
 
     vid = {"file":name,"starttime":start,"endtime":end,"percentage":0}
-    print(vid)
     videos.append(vid)
-    print(videos)
     t = Thread(target=cut,args=(vid,))
     t.start()
     return "SUCCESS"
@@ -57,7 +55,6 @@ def GET(k):
                 videos.remove(v)
                 break
 
-        print(videos)
 
 
 def cut(video):

@@ -169,3 +169,37 @@ function deleteVideoDone() {
 	console.log("Deleted!");
 	listVideos();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* beautification */
+
+function updateFrom(e) {
+	if (e.value.length === 1) {
+		e.value = '0' + e.value
+	}
+
+	document.getElementById("from").checked = true;
+
+}
+
+function updateTo(e) {
+	if (e.value.length === 1) {
+		e.value = '0' + e.value
+	}
+
+	document.getElementById("to").checked = true;
+}

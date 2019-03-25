@@ -42,14 +42,14 @@ def GET(k):
 		<br/>
 		<div class="input">
 			<input id="from" type="checkbox" /> """ + localisation["TIME_START"] + """
-				<input type="number" min=0 max=99 value=0 maxlength=2 id="from_hours" />:
-				<input type="number" min=00 max=59 value=0 maxlength=2 id="from_minutes" />:
-				<input type="number" min=00 max=59 value=0 maxlength=2 id="from_seconds" />
+				<input type="number" min=0 max=99 value=0 maxlength=2 id="from_hours" oninput=updateFrom(this) />:
+				<input type="number" min=00 max=59 value=00 maxlength=2 id="from_minutes" oninput=updateFrom(this) />:
+				<input type="number" min=00 max=59 value=00 maxlength=2 id="from_seconds" oninput=updateFrom(this) />
 
 			<input id="to" type="checkbox" /> """ + localisation["TIME_END"] + """
-				<input type="number" min=0 max=99 value=0 maxlength=2 id="to_hours" />:
-				<input type="number" min=00 max=59 value=0 maxlength=2 id="to_minutes" />:
-				<input type="number" min=00 max=59 value=0 maxlength=2 id="to_seconds" />
+				<input type="number" min=0 max=99 value=0 maxlength=2 id="to_hours" oninput=updateTo(this) />:
+				<input type="number" min=00 max=59 value=00 maxlength=2 id="to_minutes" oninput=updateTo(this) />:
+				<input type="number" min=00 max=59 value=00 maxlength=2 id="to_seconds" oninput=updateTo(this) />
 		</div>
 
     	<p id="status">&nbsp;</p>

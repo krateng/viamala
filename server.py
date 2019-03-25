@@ -43,4 +43,4 @@ def upload():
 
 port = getSettings("SERVER_PORT")[0]
 
-run(host='0.0.0.0', port=port, server='waitress')
+run(host='::', port=port, server='waitress')
