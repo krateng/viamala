@@ -13,8 +13,17 @@ for f in os.listdir("done/"):
     if f != ".gitignore" and f!= "dummy": os.remove("done/" + f)
 
 
+
+def cleanfilename(filename):
+    validchars = "'-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."
+    filename = "".join(c for c in filename if c in validchars)
+    while filename.count(".") > 1: filename.replace(".","",1)
+    return filename
+
 def add(name,start=None,end=None):
     global videos
+
+    name = cleanfilename(name)
 
     if start is not None:
         start = start.split("-")
@@ -56,14 +65,14 @@ def cut(video):
     cmd = "ffmpeg"
     if video["starttime"] is not None:
         cmd += " -ss " + ":".join([str(e) for e in video["starttime"]])
-    cmd += " -i ./queue/" + video["file"]
+    cmd += " -i './queue/" + video["file"] + "'"
     if video["endtime"] is not None:
         cmd += " -to " + ":".join([str(e) for e in video["endtime"]])
     cmd += " -c copy"
-    cmd += " ./done/" + video["file"]
+    cmd += " './done/" + video["file"] + "'"
 
     os.system(cmd)
-    #print(cmd)
+    print(cmd)
 
     video["percentage"] = 100
 
