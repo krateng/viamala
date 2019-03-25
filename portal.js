@@ -188,7 +188,7 @@ function deleteVideoDone() {
 /* beautification */
 
 function updateFrom(e) {
-	if (e.value.length === 1) {
+	if (e.value.length === 1 && e.id != "from_hours")  {
 		e.value = '0' + e.value
 	}
 
@@ -197,7 +197,7 @@ function updateFrom(e) {
 }
 
 function updateTo(e) {
-	if (e.value.length === 1) {
+	if (e.value.length === 1 && e.id != "to_hours") {
 		e.value = '0' + e.value
 	}
 

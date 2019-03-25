@@ -203,3 +203,10 @@ input[type="number"]:focus {
 	outline:none;
 
 }
+
+
+/* checkboxes */
+
+input[type="checkbox"] {
+	
+}
