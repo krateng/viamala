@@ -31,10 +31,11 @@ def upload():
 	try:
 		keys = request.query
 		filename = keys.get("name")
+		cut_from, cut_to = keys.get("cutfrom"), keys.get("cutto")
 		filetype = filename.split(".")[-1]
 		if filetype not in ["mkv","mp4","avi"]: return "ERROR_FILETYPE"
 		FileUpload(request.body,name=None,filename=None).save("queue/" + filename)
-		return cutter.add(filename)
+		return cutter.add(filename,start=cut_from,end=cut_to)
 	except:
 		return "ERROR_GENERIC"
 

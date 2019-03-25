@@ -41,15 +41,15 @@ def GET(k):
 		</div>
 		<br/>
 		<div class="input">
-			<input type="checkbox" /> """ + localisation["TIME_START"] + """
-				<input type="number" min=0 max=99 value=0 maxlength=2 />:
-				<input type="number" min=0 max=59 value=0 maxlength=2 />:
-				<input type="number" min=0 max=59 value=0 maxlength=2 />
-			
-			<input type="checkbox" /> """ + localisation["TIME_END"] + """
-				<input type="number" min=0 max=99 value=0 maxlength=2 />:
-				<input type="number" min=0 max=59 value=0 maxlength=2 />:
-				<input type="number" min=0 max=59 value=0 maxlength=2 />
+			<input id="from" type="checkbox" /> """ + localisation["TIME_START"] + """
+				<input type="number" min=0 max=99 value=0 maxlength=2 id="from_hours" />:
+				<input type="number" min=00 max=59 value=0 maxlength=2 id="from_minutes" />:
+				<input type="number" min=00 max=59 value=0 maxlength=2 id="from_seconds" />
+
+			<input id="to" type="checkbox" /> """ + localisation["TIME_END"] + """
+				<input type="number" min=0 max=99 value=0 maxlength=2 id="to_hours" />:
+				<input type="number" min=00 max=59 value=0 maxlength=2 id="to_minutes" />:
+				<input type="number" min=00 max=59 value=0 maxlength=2 id="to_seconds" />
 		</div>
 
     	<p id="status">&nbsp;</p>

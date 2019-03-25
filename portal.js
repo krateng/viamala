@@ -47,11 +47,39 @@ function pageLoad() {
 			 return;
 		 }
 
+		 cut_from = document.getElementById("from").checked;
+		 cut_to = document.getElementById("to").checked;
+
+			from_hours = document.getElementById("from_hours").value;
+			from_minutes = document.getElementById("from_minutes").value;
+			from_seconds = document.getElementById("from_seconds").value;
+			to_hours = document.getElementById("to_hours").value;
+			to_minutes = document.getElementById("to_minutes").value;
+			to_seconds = document.getElementById("to_seconds").value;
+
+			fromtime = from_hours + "-" + from_minutes + "-" + from_seconds;
+			totime = to_hours + "-" + to_minutes + "-" + to_seconds;
+
+		 timekeys = ""
+		 if (cut_from) {
+			 timekeys += "&cutfrom=" + fromtime;
+		 }
+
+		 if (cut_to) {
+			 timekeys += "&cutto=" + totime;
+		 }
+
+		 if (!cut_from && !cut_to) {
+			 document.getElementById("status").innerHTML = localisation["ERROR_NOCHANGE"];
+			 window.setTimeout(clear,2000);
+			 return
+		 }
+
 
 		 try {
 			 req = new XMLHttpRequest();
 			 req.onreadystatechange = uploadDone;
-			 req.open("POST","/upload?name=" + name, true);
+			 req.open("POST","/upload?name=" + name + timekeys, true);
 			 req.send(videofile);
 		 }
 		 catch {
@@ -66,14 +94,27 @@ function pageLoad() {
 	 function uploadDone() {
 		 if (this.readyState == 4 && this.status == 200) {
 	 		document.getElementById("status").innerHTML = localisation[this.responseText];
-	 		document.getElementById("fileupload").value = "";
-			document.getElementById("fake_fileupload").value = "";
+			resetAllInput();
 
 	 		window.setTimeout(clear,2000);
 
 	 	}
 
 	 }
+
+function resetAllInput() {
+	document.getElementById("fileupload").value = "";
+	document.getElementById("fake_fileupload").value = "";
+	inputelements = document.getElementsByTagName("input")
+	for (var i=0;i<inputelements.length;i++) {
+		if (inputelements[i].type == "number") {
+			inputelements[i].value = 0;
+
+		}
+		inputelements[i].checked = false;
+
+	}
+}
 
 
 
@@ -82,9 +123,7 @@ function pageLoad() {
 
 function clear() {
 	document.getElementById("status").innerHTML = "&nbsp;";
-	console.log("Party")
 	listVideos();
-	console.log("Hard")
 }
 
 
@@ -128,5 +167,5 @@ function deleteVideo(id) {
 
 function deleteVideoDone() {
 	console.log("Deleted!");
-	location.reload();
+	listVideos();
 }
