@@ -191,6 +191,9 @@ function updateFrom(e) {
 	if (e.value.length === 1 && e.id != "from_hours")  {
 		e.value = '0' + e.value
 	}
+	while (e.value.length > 2 && e.id != "from_hours")  {
+		e.value = ('' + e.value).slice(1)
+	}
 
 	document.getElementById("from").checked = true;
 
@@ -199,6 +202,9 @@ function updateFrom(e) {
 function updateTo(e) {
 	if (e.value.length === 1 && e.id != "to_hours") {
 		e.value = '0' + e.value
+	}
+	while (e.value.length > 2 && e.id != "to_hours")  {
+		e.value = ('' + e.value).slice(1)
 	}
 
 	document.getElementById("to").checked = true;
