@@ -15,7 +15,7 @@ for f in os.listdir("done/"):
 
 
 def cleanfilename(filename):
-    validchars = "'-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."
+    validchars = "'-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789. "
     filename = "".join(c for c in filename if c in validchars)
     while filename.count(".") > 1: filename.replace(".","",1)
     return filename

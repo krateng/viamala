@@ -1,5 +1,7 @@
 # Viamala
 
+![Screenshot](/screenshot.png?raw=true "Screenshot")
+
 Viamala is a bottle / waitress based webserver intended for the LAN that allows users to have their video files cut. This happens in a very simple manner with ffmpeg without reencoding.
 
 Works well with [surselva](https://github.com/krateng/surselva).
