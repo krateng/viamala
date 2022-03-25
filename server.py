@@ -4,18 +4,18 @@ import time
 import sys
 import random
 
-from bottle import route, get,post, run, template, static_file, request, FileUpload
+from bottle import route, get, post, run, static_file, request, FileUpload
 
 import globals
 import cutter
 from logger import log
 from settings import get_settings
 
-@route("/videos/<filename>")
+@get("/videos/<filename>")
 def video(filename):
 	log("Video file requested: " + filename)
 	return static_file(filename,root=os.path.join(globals.data_dir,"done"))
-@route("/backgrounds/<filename>")
+@get("/backgrounds/<filename>")
 def backgrounds(filename):
 	return static_file(filename,root=os.path.join(globals.data_dir,"backgrounds"))
 
@@ -40,7 +40,7 @@ def mainpage():
 		'background':background
 	})
 
-@get("/xhttp")
+@route("/xhttp")
 def xhttp():
 	keys = request.query
 	log("XHTTP Request")
