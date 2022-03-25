@@ -1,6 +1,7 @@
 import os
 from threading import Thread
 import subprocess
+import random
 
 import globals
 
@@ -52,7 +53,7 @@ def diff(st,en):
 def add(name,start=None,end=None):
 	global videos
 
-	vidid = random.randint(1000000000,9999999999)
+	vidid = str(random.randint(1000000000,9999999999))
 	name = cleanfilename(name)
 
 	if start is not None:
@@ -62,7 +63,6 @@ def add(name,start=None,end=None):
 		end = end.split("-")
 		end = [int(t) for t in end]
 
-	if name in videos: return "ERROR_EXISTS"
 
 	vid = {"filename":name,"starttime":start,"endtime":end,"processed":0}
 	videos[vidid] = vid
@@ -79,8 +79,8 @@ def xhttp_handle(k):
 		vidid = k.get("delete")
 		global videos
 		vid = videos[vidid]
-		os.remove(os.path.join(QUEUEFOLDER,vidid))
-		os.remove(os.path.join(DONEFOLDER,vidid))
+		os.remove(os.path.join(QUEUEFOLDER,vid['filename']))
+		os.remove(os.path.join(DONEFOLDER,vid['filename']))
 		del videos[vidid]
 
 
@@ -94,7 +94,7 @@ def cut(video):
 		cmd += ["-to",":".join([str(e) for e in video["endtime"]])]
 	elif video["endtime"] is not None and video["starttime"] is not None:
 		cmd += ["-t",":".join([str(e) for e in diff(video["starttime"],video["endtime"])])]
-	cmd += ["-c","copy",os.path.join(QUEUEFOLDER,video['filename'])]
+	cmd += ["-c","copy",os.path.join(DONEFOLDER,video['filename'])]
 
 	print(cmd)
 	subprocess.run(cmd)

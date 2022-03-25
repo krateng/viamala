@@ -11,7 +11,10 @@ import cutter
 from logger import log
 from settings import get_settings
 
-
+@route("/videos/<filename>")
+def video(filename):
+	log("Video file requested: " + filename)
+	return static_file(filename,root=os.path.join(globals.data_dir,"done"))
 @route("/backgrounds/<filename>")
 def backgrounds(filename):
 	return static_file(filename,root=os.path.join(globals.data_dir,"backgrounds"))
@@ -52,9 +55,10 @@ def upload():
 		cut_from, cut_to = keys.get("cutfrom"), keys.get("cutto")
 		filetype = filename.split(".")[-1]
 		if filetype not in ["mkv","mp4","avi"]: return "ERROR_FILETYPE"
-		FileUpload(request.body,name=None,filename=None).save(globals.user_folders['QUEUEFOLDER'],filename)
+		FileUpload(request.body,name=None,filename=None).save(os.path.join(globals.user_folders['QUEUEFOLDER'],filename))
 		return cutter.add(filename,start=cut_from,end=cut_to)
 	except:
+		raise
 		return "ERROR_GENERIC"
 
 host = "0.0.0.0" if "--ipv4" in sys.argv else "::"
