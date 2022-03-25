@@ -1,11 +1,13 @@
-from bottle import route, get,post, run, template, static_file, request, FileUpload
 import os
-from importlib.machinery import SourceFileLoader
-from serverutil import log
 import waitress
-from settings import getSettings
 import time
+
+from bottle import route, get,post, run, template, static_file, request, FileUpload
+
 import cutter
+import globals
+from logger import log
+from settings import get_settings
 
 @get("/<pth:path>")
 def static(pth):
@@ -16,9 +18,18 @@ def static(pth):
 @get("")
 @get("/")
 def mainpage():
-	keys = request.query
+	page_template = globals.jinjaenv.get_template('page.html.jinja')
 	log("Requesting main page")
-	return SourceFileLoader("mainpage","mainpage.py").load_module().GET(keys)
+	localisation = get_settings()['localisation']
+	try:
+		background = random.choice(os.listdir(globals.user_folders['BACKGROUNDFOLDER']))
+	except:
+		background = ''
+	return page_template.render({
+		'localisation':localisation,
+		#'localisation_json':json.dumps(localisation),
+		'background':background
+	})
 
 @get("/xhttp")
 def xhttp():
@@ -41,6 +52,6 @@ def upload():
 		return "ERROR_GENERIC"
 
 
-port = getSettings("SERVER_PORT")[0]
+port = get_settings()["SERVER_PORT"]
 
 run(host='::', port=port, server='waitress')
