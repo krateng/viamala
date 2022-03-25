@@ -1,18 +1,24 @@
 import os
 import waitress
 import time
+import sys
+import random
 
 from bottle import route, get,post, run, template, static_file, request, FileUpload
 
-import cutter
 import globals
+import cutter
 from logger import log
 from settings import get_settings
 
+
+@route("/backgrounds/<filename>")
+def backgrounds(filename):
+	return static_file(filename,root=os.path.join(globals.data_dir,"backgrounds"))
+
 @get("/<pth:path>")
 def static(pth):
-	log("Static file requested: " + pth)
-	return static_file(pth,root="")
+	return static_file(pth,root="./static")
 
 
 @get("")
@@ -35,7 +41,7 @@ def mainpage():
 def xhttp():
 	keys = request.query
 	log("XHTTP Request")
-	return cutter.GET(keys)
+	return cutter.xhttp_handle(keys)
 
 @post("/upload")
 def upload():
@@ -46,12 +52,12 @@ def upload():
 		cut_from, cut_to = keys.get("cutfrom"), keys.get("cutto")
 		filetype = filename.split(".")[-1]
 		if filetype not in ["mkv","mp4","avi"]: return "ERROR_FILETYPE"
-		FileUpload(request.body,name=None,filename=None).save("queue/" + filename)
+		FileUpload(request.body,name=None,filename=None).save(globals.user_folders['QUEUEFOLDER'],filename)
 		return cutter.add(filename,start=cut_from,end=cut_to)
 	except:
 		return "ERROR_GENERIC"
 
+host = "0.0.0.0" if "--ipv4" in sys.argv else "::"
+port = get_settings()['server']['PORT']
 
-port = get_settings()["SERVER_PORT"]
-
-run(host='::', port=port, server='waitress')
+run(host=host, port=port, server='waitress')

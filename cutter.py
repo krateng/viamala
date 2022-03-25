@@ -1,16 +1,22 @@
 import os
-from collections import namedtuple
 from threading import Thread
+import subprocess
 
-videos = []
+import globals
 
+
+# unlike surselva, we don't keep tasks on disk here, just in memory!
+videos = {}
+
+
+QUEUEFOLDER = globals.user_folders['QUEUEFOLDER']
+DONEFOLDER = globals.user_folders['DONEFOLDER']
 
 #first startup, delete all leftover videofiles
-
-for f in os.listdir("queue/"):
-	if f != ".gitignore" and f!= "dummy": os.remove("queue/" + f)
-for f in os.listdir("done/"):
-	if f != ".gitignore" and f!= "dummy": os.remove("done/" + f)
+for f in os.listdir(QUEUEFOLDER):
+	os.remove(os.path.join(QUEUEFOLDER,f))
+for f in os.listdir(DONEFOLDER):
+	os.remove(os.path.join(DONEFOLDER,f))
 
 
 
@@ -46,6 +52,7 @@ def diff(st,en):
 def add(name,start=None,end=None):
 	global videos
 
+	vidid = random.randint(1000000000,9999999999)
 	name = cleanfilename(name)
 
 	if start is not None:
@@ -57,93 +64,47 @@ def add(name,start=None,end=None):
 
 	if name in videos: return "ERROR_EXISTS"
 
-	vid = {"file":name,"starttime":start,"endtime":end,"percentage":0}
-	videos.append(vid)
+	vid = {"filename":name,"starttime":start,"endtime":end,"processed":0}
+	videos[vidid] = vid
 	t = Thread(target=cut,args=(vid,))
 	t.start()
 	return "SUCCESS"
 
 
 
-def GET(k):
+def xhttp_handle(k):
 	if k.get("list") is not None:
-		return videolist()
+		return show_videos()
 	if k.get("delete") is not None:
-		name = k.get("delete")
+		vidid = k.get("delete")
 		global videos
-		for v in videos:
-			if v["file"] == name:
-				os.remove("./done/" + name)
-				os.remove("./queue/" + name)
-				videos.remove(v)
-				break
+		vid = videos[vidid]
+		os.remove(os.path.join(QUEUEFOLDER,vidid))
+		os.remove(os.path.join(DONEFOLDER,vidid))
+		del videos[vidid]
 
 
 
 def cut(video):
-	global videos
-	cmd = "ffmpeg"
+	cmd = ["ffmpeg"]
 	if video["starttime"] is not None:
-		cmd += " -ss " + ":".join([str(e) for e in video["starttime"]])
-	cmd += " -i './queue/" + video["file"] + "'"
+		cmd += ["-ss",":".join([str(e) for e in video["starttime"]])]
+	cmd += ["-i",os.path.join(QUEUEFOLDER,video['filename'])]
 	if video["endtime"] is not None and video["starttime"] is None:
-		cmd += " -to " + ":".join([str(e) for e in video["endtime"]])
+		cmd += ["-to",":".join([str(e) for e in video["endtime"]])]
 	elif video["endtime"] is not None and video["starttime"] is not None:
-		cmd += " -t " + ":".join([str(e) for e in diff(video["starttime"],video["endtime"])])
-	cmd += " -c copy"
-	cmd += " './done/" + video["file"] + "'"
+		cmd += ["-t",":".join([str(e) for e in diff(video["starttime"],video["endtime"])])]
+	cmd += ["-c","copy",os.path.join(QUEUEFOLDER,video['filename'])]
 
-	os.system(cmd)
 	print(cmd)
+	subprocess.run(cmd)
 
-	video["percentage"] = 100
-
-
-
-
-
-def videolist():
-	global videos
-	html = ""
-
-
-	for video in videos:
-
-		name = video["file"]
-		desc = []
-		if video["starttime"] is not None:
-			starttime = []
-			(h,m,s) = video["starttime"]
-			if h != 0: starttime.append(str(h))
-			if len(starttime) != 0: starttime.append("0" + str(m) if m<10 else str(m))
-			elif m>0: starttime.append(str(m))
-			else: starttime.append("")
-			starttime.append("0" + str(s) if s<10 else str(s))
-			desc.append("from " + ":".join(starttime))
-		if video["endtime"] is not None:
-			endtime = []
-			(h,m,s) = video["endtime"]
-			if h != 0: endtime.append(str(h))
-			if len(endtime) != 0: endtime.append("0" + str(m) if m<10 else str(m))
-			elif m>0: endtime.append(str(m))
-			else: endtime.append("")
-			endtime.append("0" + str(s) if s<10 else str(s))
-			desc.append("to " + ":".join(endtime))
-		complete = (video["percentage"] == 100)
-
-		showname = name + " (" + " ".join(desc) + ")"
-
-
-		#log("Listing video " + l['id'] + ", title " + l['title'] + ", size " + str(l['size']) + ", loaded to " + str(l['loaded']) + "%")
-		if complete:
-			html += "<a href='/done/" + name + "' download><div class='button-small save'>&nbsp;</div></a><a href='/done/" + name + "'><div class='button-small watch'>&nbsp;</div></a><div class='button-small delete' onclick='deleteVideo(\"" + name + "\")'>&nbsp;</div>" + showname + "<br/>"
-		else:
-			##103 pixel in total
-			TOTAL_PIXEL = 103
-			pixel_yes = int(TOTAL_PIXEL * video["percentage"] / 100)
-			pixel_no = TOTAL_PIXEL - pixel_yes
-			html += "<div class='loadingbar-yes' style='width:" + str(pixel_yes) + "px'>&nbsp;</div><div class='loadingbar-no' style='width:" + str(pixel_no) + "px'>&nbsp;</div>" + showname + "<br/>"
+	# right now we only have processed 0 and 100, but keeping this for
+	# surselva uniformity
+	video["processed"] = 100
 
 
 
-	return html
+def show_videos():
+	template = globals.jinjaenv.get_template('videolist.html.jinja')
+	return template.render(videos=videos)

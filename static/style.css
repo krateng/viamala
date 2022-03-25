@@ -3,7 +3,6 @@ body {
 	text-align: center;
 	color: DarkRed;
 	font-family: 'Roboto Mono', monospace;
-	background-image:url('background.jpg'), url('background_default.jpg');
 	background-size:cover;
 }
 
@@ -208,5 +207,5 @@ input[type="number"]:focus {
 /* checkboxes */
 
 input[type="checkbox"] {
-	
+
 }

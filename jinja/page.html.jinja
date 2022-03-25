@@ -13,6 +13,14 @@
 	<script>
 		localisation = {{ localisation }}
 	</script>
+
+	<style>
+		body {
+			background-image:url('/backgrounds/{{ background }}'), url('/background_default.jpg');
+		}
+	</style>
+
+	
   </head>
   <body onload="pageLoad()" ondragover="dragover(event)" ondrop="readFile(event)">
     <br>
